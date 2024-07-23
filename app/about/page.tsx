@@ -1,5 +1,14 @@
+import AboutHero from "@/components/AboutHero";
+
 const about = () => {
-  return <h1>Welcome to about page</h1>;
+  return (
+    <div>
+      <AboutHero
+        title="Your trusted partner for eco-friendly logistics solutions"
+        subtitle="across Australia"
+      />
+    </div>
+  );
 };
 
 export default about;
