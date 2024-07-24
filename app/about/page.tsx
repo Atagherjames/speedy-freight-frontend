@@ -150,7 +150,7 @@ const about: React.FC = () => {
               Message from the management
             </h1>
             <p>
-              Message from the management Welcome to Speedy Freight, where we
+               Welcome to Speedy Freight, where we
               revolutionize premium delivery services for leading brands with
               reliability and efficiency. Our versatile fleet ensures timely and
               safe deliveries of bulky items, offering flexible options like
@@ -165,10 +165,10 @@ const about: React.FC = () => {
 
           <div>
             <Image
-              src={"/images/z.jpg"}
+              src={"/images/thomas.png"}
               alt="Thomas Dennis"
-              width={400}
-              height={400}
+              width={300}
+              height={300}
             />
           </div>
         </div>

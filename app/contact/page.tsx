@@ -119,7 +119,7 @@ const contact = () => {
               <BiHome className="text-4xl md:text-6xl text-[#EC9A16]" />
             </span>
 
-            <p className="text-2xl text-center mt-10">Our office</p>
+            <p className="text-2xl text-center mt-10">Visit us</p>
           </div>
 
           {/* CARD THREE */}
@@ -129,7 +129,7 @@ const contact = () => {
               <BiPhoneIncoming className="text-4xl md:text-6xl text-[#3F9A60]" />
             </span>
 
-            <p className="text-2xl text-center -mt-10">Contact our Sales rep</p>
+            <p className="text-2xl text-center -mt-10">Call Us</p>
           </div>
         </section>
       </div>
