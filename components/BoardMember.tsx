@@ -13,7 +13,7 @@ const BoardMemberCard: React.FC<BoardMemberProps> = ({
 }) => {
   return (
     <div className="max-w-md mx-auto p-6 bg-[#ffffff] z-20 rounded-xl shadow-md overflow-hidden m-4">
-      <img className="w-full object-cover" src={src} alt={name} />
+      <img className=" w-[300px] h-[300px]" src={src} alt={name} />
       <div className="p-8 bg-[#ffffff]">
         <div className="uppercase tracking-wide text-sm text-indigo-500 font-semibold">
           {name}
