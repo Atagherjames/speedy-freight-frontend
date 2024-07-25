@@ -7,19 +7,13 @@ export const navbarLinks = [
     label: "About Us",
     route: "/about",
   },
-
   {
-    label: "Our Operations",
-    route: "/our-operations",
+    label: "Get A Quote",
+    route: "/bookings",
   },
   {
     label: "Contact",
     route: "/contact",
-  },
-
-  {
-    label: "Get A Quote",
-    route: "/bookings",
   },
 ];
 
