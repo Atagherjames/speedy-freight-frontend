@@ -142,7 +142,7 @@ const about: React.FC = () => {
             backgroundImage: `url(/images/2.png)`,
           }}
         >
-          <p className="text-3xl text-center">
+          <p className="text-xl md:text-3xl text-center">
             Fast, reliable delivery with broad reach and real-time tracking,
             tailored to meet your needs.
           </p>
@@ -150,9 +150,9 @@ const about: React.FC = () => {
       </section>
 
       <section className="grid place-items-center bg-slate-100 mt-20 py-10">
-        <div className="flex flex-col-reverse w-[100%] md:flex-row md:w-[70%] gap-10">
+        <div className="flex flex-col-reverse w-[90%] md:flex-row md:w-[70%] gap-10">
           <div className=" w-[100%] md:w-[800px]">
-            <h1 className="text-2xl font-bold pb-6 uppercase">
+            <h1 className=" md:text-center text-2xl font-bold pb-6 uppercase">
               Message from the management
             </h1>
             <p>
@@ -168,7 +168,7 @@ const about: React.FC = () => {
             <p> Director, Speedy Freight</p>
           </div>
 
-          <div>
+          <div className="self-center">
             <Image
               src={"/images/thomas.png"}
               alt="Thomas Dennis"
@@ -185,11 +185,17 @@ const about: React.FC = () => {
           Testimonials
         </h1>
         <Swiper
-          slidesPerView={2}
+          slidesPerView={1}
           spaceBetween={30}
           pagination={{ clickable: true }}
           modules={[Pagination]}
-          className="mySwiper w-[800px]"
+          className="mySwiper  md:w-[800px]"
+          breakpoints={{
+            800: {
+              slidesPerView: 2,
+              spaceBetween: 30,
+            },
+          }}
         >
           <SwiperSlide className="py-12">
             <TestimonyCard
@@ -213,7 +219,7 @@ const about: React.FC = () => {
         <h1 className="text-center  font-bold pb-6 uppercase  text-2xl">
           MEET OUR BOARD MEMBERS
         </h1>
-        <div className="grid grid-cols-3 gap-8 p-6 w-[1200px]  bg-slate-100 ml-auto mr-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3  gap-2 md:gap-8 p-6  w-[100%] md:w-[1200px]  bg-slate-100 ml-auto mr-auto">
           <BoardMemberCard
             src={"/images/image 17.png"}
             name={"Thomas Dennis"}
