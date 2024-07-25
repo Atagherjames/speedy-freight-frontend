@@ -1,11 +1,14 @@
 "use client";
-
+import { useState, useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import PhoneInput from "react-phone-number-input";
+import { useForm as formsPree } from "@formspree/react";
 import "react-phone-number-input/style.css";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.min.css";
 
 import {
   Form,
@@ -16,7 +19,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 
 import {
@@ -35,6 +37,8 @@ import ContactHero from "@/components/ContactHero";
 import { BiChat, BiHome, BiPhoneIncoming } from "react-icons/bi";
 
 const contact = () => {
+  const [formState, handleFormspreeSubmit] = formsPree("xkgwoylv");
+
   const formSchema = z.object({
     firstName: z.string().min(2, {
       message: "First name must be at least 2 characters.",
@@ -80,16 +84,34 @@ const contact = () => {
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
-  }
+    handleFormspreeSubmit(values);
 
+    if (formState.succeeded) {
+      toast.success("🦄 Wow, message sent successfully!", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    } else {
+      toast.error("🚨 Error sending message, please try again.", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    }
+  }
   return (
     <>
       <div>
         <ContactHero />
-
         {/* ABOUT SPEEDY FREIGHT */}
         <section className="my-16">
           <div className="flex flex-col items-center justify-center w-full">
@@ -101,7 +123,6 @@ const contact = () => {
             </h1>
           </div>
         </section>
-
         {/* contact cards */}
         <section className="mb-12 flex justify-center gap-8 md:gap-20 flex-wrap align-center">
           {/* CARD ONE */}
