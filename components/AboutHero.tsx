@@ -27,8 +27,8 @@ const Hero = ({ title, subtitle, btnText }: HeroProps) => {
       >
         <div className="w-full h-full flex  justify-center items-center backdrop-brightness-50">
           <div className="my-auto lg:ml-[50px] lg:text-left text-center text-white mx-auto w-[90%]">
-            <h1 className="lg:text-[1.4rem] text-[2rem] font-[700]">{title}</h1>
-            <h1 className="lg:text-[1.4rem] text-[2rem] font-[700]">
+            <h1 className="lg:text-[2rem] text-[1.2rem] font-[700]">{title}</h1>
+            <h1 className="lg:text-[2rem] text-[1.2rem] font-[700]">
               {subtitle}
             </h1>
             <Button className="bg-blue-1 mt-8">Book Us</Button>
