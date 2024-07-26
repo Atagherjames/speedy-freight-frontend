@@ -10,7 +10,7 @@ const Hero = () => {
   };
 
   return (
-    <section className="flex h-[80vh] juastify-center items-center flex-col">
+    <section className="flex h-[80vh] justify-center items-center flex-col">
       <div
         className="w-full h-screen bg-[#433A3A] text-white-1  bg-cover bg-center"
         style={heroStyle}

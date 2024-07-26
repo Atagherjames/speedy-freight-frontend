@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -7,9 +7,9 @@ import { Button } from "@/components/ui/button";
 import PhoneInput from "react-phone-number-input";
 import { useForm as formsPree } from "@formspree/react";
 import "react-phone-number-input/style.css";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.min.css";
-
+import { Circles } from "react-loader-spinner";
 import {
   Form,
   FormControl,
@@ -24,9 +24,7 @@ import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
-  SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
@@ -38,7 +36,7 @@ import { BiChat, BiHome, BiPhoneIncoming } from "react-icons/bi";
 
 const contact = () => {
   const [formState, handleFormspreeSubmit] = formsPree("xkgwoylv");
-
+  const [loading, setLoading] = useState(false);
   const formSchema = z.object({
     firstName: z.string().min(2, {
       message: "First name must be at least 2 characters.",
@@ -70,7 +68,6 @@ const contact = () => {
     ]),
   });
 
-  // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -83,29 +80,24 @@ const contact = () => {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    handleFormspreeSubmit(values);
-
-    if (formState.succeeded) {
-      toast.success("🦄 Wow, message sent successfully!", {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
-    } else {
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    setLoading(true);
+    try {
+      await handleFormspreeSubmit(values);
+      if (formState.succeeded) {
+        toast.success("🦄 Wow, message sent successfully!", {
+          position: "top-right",
+          autoClose: 5000,
+        });
+        form.reset();
+      }
+    } catch (err) {
       toast.error("🚨 Error sending message, please try again.", {
         position: "top-right",
         autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
       });
+    } finally {
+      setLoading(false);
     }
   }
   return (
@@ -144,7 +136,6 @@ const contact = () => {
           </div>
 
           {/* CARD THREE */}
-
           <div className="cursor-pointer border-2 border-[#3F9A60] rounded p-2 h-[250px] grid place-items-center  w-[250px]">
             <span>
               <BiPhoneIncoming className="text-4xl md:text-6xl text-[#3F9A60]" />
@@ -269,11 +260,22 @@ const contact = () => {
                   </FormItem>
                 )}
               />
+
               <Button
                 type="submit"
-                className="py-3 bg-blue-1 text-white-1 w-full"
+                className="py-3 bg-blue-1 flex gap-4 text-white-1 w-full"
               >
-                Submit
+                <span> Submit</span>
+                <span>
+                  {loading && (
+                    <Circles
+                      height="25"
+                      width="25"
+                      color="green"
+                      ariaLabel="circles-loading"
+                    />
+                  )}
+                </span>
               </Button>
             </form>
           </Form>

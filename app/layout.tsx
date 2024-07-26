@@ -21,7 +21,9 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <ToastContainer className={"z-50"} />
+
         <Navbar />
+
         <div className="translate-y-[70px]">{children}</div>
         <Footer />
       </body>
