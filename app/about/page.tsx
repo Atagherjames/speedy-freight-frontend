@@ -27,7 +27,7 @@ const about: React.FC = () => {
       <p className="text-center  text-blue-600 mt-8 pb-6 uppercase  text-xl">
         GET TO KNOW
       </p>
-      <h1 className="text-center  font-bold pb-6 uppercase  text-2xl">
+      <h1 className="text-center  font-bold pb-6 uppercase  text-xl md:text-2xl">
         SPEEDY FREIGHT SOLUTIONS
       </h1>
       <div className="flex flex-col w-[90%] md:flex-row md:w-[70%] justify-between ml-auto mr-auto align-center gap-10 mt-20">
@@ -68,15 +68,15 @@ const about: React.FC = () => {
       </div>
 
       <section className="my-32 grid place-items-center">
-        <h1 className="text-3xl uppercase font-normal">
+        <h1 className=" text-xl text-center md:text-3xl uppercase font-normal">
           Our Unique Selling Point
         </h1>
 
         <Card className=" w-[90%] md:w-[70%] my-8 py-10">
           <CardContent className="grid  grid-cols-1 md:grid-cols-4 place-items-center gap-8">
-            <div className="cursor-pointer border-2 border-blue-1 rounded p-2  h-[200px] grid place-items-center w-[200px]">
+            <div className="cursor-pointer border-2 border-blue-1 rounded p-2  h-[200px] grid place-items-center w-full md:w-[200px]">
               <span>
-                <GoPeople className="text-2xl md:text-6xl text-blue-1" />
+                <GoPeople className="text-4xl md:text-6xl text-blue-1" />
               </span>
               <p className="font-bold text-center">Trained Professionals</p>
               <p className="text-center">
@@ -84,9 +84,9 @@ const about: React.FC = () => {
               </p>
             </div>
 
-            <div className="cursor-pointer border-2 border-blue-1 rounded p-2 h-[200px] grid place-items-center w-[200px]">
+            <div className="cursor-pointer border-2 border-blue-1 rounded p-2 h-[200px] grid place-items-center w-full md:w-[200px]">
               <span>
-                <GoBroadcast className="text-2xl md:text-6xl text-blue-1" />
+                <GoBroadcast className="text-4xl md:text-6xl text-blue-1" />
               </span>
               <p className="font-bold text-center">Broad Reach</p>
               <p className="text-center">
@@ -94,17 +94,17 @@ const about: React.FC = () => {
               </p>
             </div>
 
-            <div className="cursor-pointer border-2 border-blue-1 rounded p-2 h-[200px] grid place-items-center w-[200px]">
+            <div className="cursor-pointer border-2 border-blue-1 rounded p-2 h-[200px] grid place-items-center w-full md:w-[200px]">
               <span>
-                <TbTruckDelivery className="text-2xl md:text-6xl text-blue-1" />
+                <TbTruckDelivery className="text-4xl md:text-6xl text-blue-1" />
               </span>
               <p className="font-bold text-center">Speedy Delivery</p>
               <p className="text-center">Fast shipping times</p>
             </div>
 
-            <div className="cursor-pointer border-2 border-blue-1 rounded p-2 h-[200px] grid place-items-center w-[200px]">
+            <div className="cursor-pointer border-2 border-blue-1 rounded p-2 h-[200px] grid place-items-center w-full md:w-[200px]">
               <span>
-                <RiShakeHandsLine className="text-2xl md:text-6xl text-blue-1" />
+                <RiShakeHandsLine className="text-4xl md:text-6xl text-blue-1" />
               </span>
               <p className="font-bold text-center">Partnerships</p>
               <p className="text-center">
@@ -112,9 +112,9 @@ const about: React.FC = () => {
               </p>
             </div>
 
-            <div className="cursor-pointer border-2 border-blue-1 rounded p-2 h-[200px] grid place-items-center w-[200px]">
+            <div className="cursor-pointer border-2 border-blue-1 rounded p-2 h-[200px] grid place-items-center w-full md:w-[200px]">
               <span>
-                <RiMoneyDollarCircleFill className="text-2xl md:text-6xl text-blue-1" />
+                <RiMoneyDollarCircleFill className="text-4xl md:text-6xl text-blue-1" />
               </span>
               <p className="font-bold text-center">Cost Efficiency</p>
               <p className="text-center">
@@ -122,9 +122,9 @@ const about: React.FC = () => {
               </p>
             </div>
 
-            <div className="cursor-pointer border-2 border-blue-1 rounded p-2 h-[200px] grid place-items-center w-[200px]">
+            <div className="cursor-pointer border-2 border-blue-1 rounded p-2 h-[200px] grid place-items-center w-full md:w-[200px]">
               <span>
-                <MdOutlineSecurity className="text-2xl md:text-6xl text-blue-1" />
+                <MdOutlineSecurity className="text-4xl md:text-6xl text-blue-1" />
               </span>
               <p className="font-bold text-center">Secure Handling</p>
               <p className="text-center">
@@ -142,7 +142,7 @@ const about: React.FC = () => {
             backgroundImage: `url(/images/2.png)`,
           }}
         >
-          <p className="text-xl md:text-3xl text-center">
+          <p className=" w-[90%] text-xl md:text-3xl text-center">
             Fast, reliable delivery with broad reach and real-time tracking,
             tailored to meet your needs.
           </p>

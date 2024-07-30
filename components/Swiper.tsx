@@ -46,80 +46,11 @@ const Hero = ({ title, subtitle, btnText }: HeroProps) => {
     };
   });
 
-  // useEffect(() => {
-  //   AOS.init();
-  //   AOS.refresh();
-  // });
-
   const heroStyle = {
     backgroundImage: `url(${backgroundData[backgroundIndex]})`,
   };
 
   return (
-    // <Swiper
-    //   spaceBetween={30}
-    //   centeredSlides={true}
-    //   autoplay={{
-    //     delay: 5000,
-    //     disableOnInteraction: false,
-    //   }}
-    //   pagination={{
-    //     clickable: true,
-    //   }}
-    //   navigation
-    //   modules={[Autoplay, Pagination, Navigation]}
-    //   className={`${styles.mySwiper} ${styles.swiper}`}
-    // >
-    //   <SwiperSlide className={styles.swiperSlide}>
-    //     <Image
-    //       src={x}
-    //       width={100}
-    //       height={100}
-    //       alt='sss'
-    //       layout='responsive'
-    //       priority={true}
-    //     />
-    //     <div className='flex flex-col items-center justify-center size-full'>
-    //       <span className={styles.caption}>
-    //         Track Your Shipment in Real-Time
-    //       </span>
-    //       <p>Stay informed with our advanced tracking technology.</p>
-    //     </div>
-    //   </SwiperSlide>
-    //   <SwiperSlide className={styles.swiperSlide}>
-    //     <Image
-    //       src={z}
-    //       width={100}
-    //       height={100}
-    //       alt='sss'
-    //       layout='responsive'
-    //       priority={true}
-    //     />
-    //     <div className='flex flex-col items-center justify-center size-full'>
-    //       <span className={styles.caption}>
-    //         Customized Logistics for Your Needs
-    //       </span>
-    //       <p>Tailored delivery solutions to meet your specific requirements.</p>
-    //     </div>
-    //   </SwiperSlide>
-    //   <SwiperSlide className={styles.swiperSlide}>
-    //     <Image
-    //       src={y}
-    //       width={100}
-    //       height={100}
-    //       alt='ss'
-    //       layout='responsive'
-    //       priority={true}
-    //     />
-    //     <div className='flex flex-col items-center justify-center size-full'>
-    //       <span className={styles.caption}>Committed to Sustainability</span>
-    //       <p>
-    //         Eco-friendly practices for a greener future in transportation and
-    //         delivery.
-    //       </p>
-    //     </div>
-    //   </SwiperSlide>
-    // </Swiper>
     <section className="flex h-[80vh] justify-center items-center flex-col">
       <div
         className="w-full h-screen bg-[#433A3A] text-white-1  bg-cover bg-center"
