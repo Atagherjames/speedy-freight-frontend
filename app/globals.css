@@ -1,0 +1,16 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --shadow: 2px 4px 10px rgba(175, 175, 166, 0.7);
+}
+
+nav {
+  box-shadow: var(--shadow);
+}
+
+#home-hero {
+  background: url('https://ik.imagekit.io/vasl2zgr3d/1.png?updatedAt=1720750422064')
+    no-repeat center center/cover;
+}
