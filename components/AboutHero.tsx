@@ -4,6 +4,7 @@
 import { useState, useEffect } from "react";
 
 import Image from "next/image";
+import Link from "next/link";
 
 import { sliders } from "@/constants";
 
@@ -31,7 +32,9 @@ const Hero = ({ title, subtitle, btnText }: HeroProps) => {
             <h1 className="lg:text-[4rem] text-[2rem] font-[700]">
               {subtitle}
             </h1>
-            <Button className="bg-blue-1 mt-8">Book Us</Button>
+            <Link href="/bookings">
+              <Button className="bg-blue-1 mt-8">Book Us</Button>
+            </Link>
           </div>
         </div>
       </div>

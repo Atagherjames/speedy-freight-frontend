@@ -10,6 +10,7 @@ import "react-phone-number-input/style.css";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.min.css";
 import { Circles } from "react-loader-spinner";
+import Link from "next/link";
 import {
   Form,
   FormControl,
@@ -37,6 +38,14 @@ import { BiChat, BiHome, BiPhoneIncoming } from "react-icons/bi";
 const contact = () => {
   const [formState, handleFormspreeSubmit] = formsPree("xkgwoylv");
   const [loading, setLoading] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+
+  const scrollToBottom = () => {
+    window.scrollTo({
+      top: document.documentElement.scrollHeight,
+      behavior: "smooth",
+    });
+  };
   const formSchema = z.object({
     firstName: z.string().min(2, {
       message: "First name must be at least 2 characters.",
@@ -118,7 +127,10 @@ const contact = () => {
         {/* contact cards */}
         <section className="mb-12 flex justify-center gap-8 md:gap-20 flex-wrap align-center">
           {/* CARD ONE */}
-          <div className="cursor-pointer border-2 border-blue-1 rounded p-2 h-[250px] grid place-items-center  w-[250px]">
+          <div
+            onClick={scrollToBottom}
+            className="cursor-pointer border-2 border-blue-1 rounded p-2 h-[250px] grid place-items-center  w-[250px]"
+          >
             <span>
               <BiChat className="text-4xl md:text-6xl text-blue-1" />
             </span>
@@ -127,22 +139,36 @@ const contact = () => {
           </div>
 
           {/* CARD TWO */}
-          <div className="cursor-pointer border-2  border-[#EC9A16] rounded p-2 h-[250px] grid place-items-center  w-[250px]">
+          <div
+            className="relative  border-2 border-[#EC9A16] rounded p-2 h-[250px] grid place-items-center w-[250px]"
+            onMouseEnter={() => setShowModal(true)}
+            onMouseLeave={() => setShowModal(false)}
+          >
             <span>
               <BiHome className="text-4xl md:text-6xl text-[#EC9A16]" />
             </span>
 
             <p className="text-2xl text-center mt-10">Visit us</p>
+
+            {showModal && (
+              <div className="absolute top-0 left-0 right-0 z-40 w-full h-full flex items-center justify-center">
+                <div className="bg-white border border-[#EC9A16] rounded p-4 shadow-lg">
+                  <p className="text-lg">138 Juliette Street, Greenslopes</p>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* CARD THREE */}
-          <div className="cursor-pointer border-2 border-[#3F9A60] rounded p-2 h-[250px] grid place-items-center  w-[250px]">
-            <span>
-              <BiPhoneIncoming className="text-4xl md:text-6xl text-[#3F9A60]" />
-            </span>
+          <Link href="tel:+610480004037">
+            <div className="cursor-pointer border-2 border-[#3F9A60] rounded p-2 h-[250px] grid place-items-center  w-[250px]">
+              <span>
+                <BiPhoneIncoming className="text-4xl md:text-6xl text-[#3F9A60]" />
+              </span>
 
-            <p className="text-2xl text-center -mt-10">Call Us</p>
-          </div>
+              <p className="text-2xl text-center -mt-10">Call Us</p>
+            </div>
+          </Link>
         </section>
       </div>
 

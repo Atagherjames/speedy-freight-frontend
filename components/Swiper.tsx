@@ -6,6 +6,7 @@ import React, { useState, useEffect } from "react";
 // import "aos/dist/aos.css";
 // import { Swiper, SwiperSlide } from 'swiper/react';
 import Image from "next/image";
+import Link from "next/link";
 
 // import "swiper/css";
 // import "swiper/css/pagination";
@@ -68,7 +69,9 @@ const Hero = ({ title, subtitle, btnText }: HeroProps) => {
               Reliable, Fast, and Secure Transportation Services Tailored to
               Your Needs
             </p>
-            <Button className="bg-blue-1">Book Us</Button>
+            <Link href={"/bookings"}>
+              <Button className="bg-blue-1">Book Us</Button>
+            </Link>
           </div>
         </div>
       </div>

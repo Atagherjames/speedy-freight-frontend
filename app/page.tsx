@@ -7,7 +7,8 @@ import { Button } from "@/components/ui/button";
 import { TbRouteSquare } from "react-icons/tb";
 import { FaHeadphonesAlt } from "react-icons/fa";
 import { IoRocketSharp } from "react-icons/io5";
-import Footer from "@/components/Footer";
+import Link from "next/link";
+
 export default function Home() {
   return (
     <>
@@ -124,10 +125,11 @@ export default function Home() {
             Reliable, fast, and nationwide delivery. Trust Speedy Freight for
             all your logistics needs.
           </p>
-
-          <Button className="bg-blue-1 text-white-1 cursor-pointer text-2xl px-4 py-4 ">
-            Book us
-          </Button>
+          <Link href="/bookings">
+            <Button className="bg-blue-1 text-white-1 cursor-pointer text-2xl px-4 py-4 ">
+              Book us
+            </Button>
+          </Link>
         </div>
       </section>
 
