@@ -1,5 +1,6 @@
 "use client";
-import { useState, useRef, useEffect } from "react";
+
+import React, { useState, useRef, useEffect } from "react";
 import { useForm, FormProvider, Controller } from "react-hook-form";
 import { motion, AnimatePresence } from "framer-motion";
 import { useForm as formsPree } from "@formspree/react";
@@ -74,10 +75,11 @@ const disposalFees = [
 // Zod schemas for validation
 const step1Schema = z.object({
   service: z.string().min(1, "Service is required"),
+  location: z.string().min(1, "Location is required"),
+  dropOffLocation: z.string().min(1, "Drop-off Location is required"),
 });
 
 const step2Schema = z.object({
-  location: z.string().min(1, "Location is required"), // Replacing distance with location
   stairs: z.preprocess(
     (val) => parseInt(val as string, 10),
     z.number().min(0, "Number of stairs must be a positive number")
@@ -90,6 +92,15 @@ const step2Schema = z.object({
 
 const step3Schema = z.object({
   timeSlot: z.string().min(1, "Time slot is required"),
+  subscription: z
+    .string()
+    .min(1, "Subscription is required")
+    .refine(
+      (value) => ["One-Time", "Daily", "Weekly", "Monthly"].includes(value),
+      {
+        message: "Invalid subscription selected",
+      }
+    ),
 });
 
 // TypeScript types inferred from Zod schemas
@@ -103,6 +114,9 @@ interface QuoteDetails {
   distanceFee: number;
   stairsFee: number;
   locationName: any;
+  dropOffLocationName: any;
+  subscription: any;
+  distance: any;
   peakHourFee: number;
   disposalFee: number;
   bookingFee: number;
@@ -134,29 +148,25 @@ export default function BookingForm() {
   const handlePreviousStep = () => {
     setStep(step - 1);
   };
-  const locations = [
-    { name: "Brisbane", lat: -27.4698, lon: 153.0251 },
-    { name: "Ipswich", lat: -27.6144, lon: 152.7633 },
-    { name: "Logan City", lat: -27.6392, lon: 153.1094 },
-    { name: "Redland City", lat: -27.5204, lon: 153.2681 },
-    { name: "Moreton Bay", lat: -27.1423, lon: 152.9504 },
-    { name: "Gold Coast", lat: -28.0167, lon: 153.4 },
-    { name: "Sunshine Coast", lat: -26.65, lon: 153.0667 },
-    { name: "Caboolture", lat: -27.0844, lon: 152.951 },
-    { name: "Caloundra", lat: -26.8039, lon: 153.1211 },
-    { name: "Nambour", lat: -26.623, lon: 152.959 },
-    { name: "Redcliffe", lat: -27.2327, lon: 153.1142 },
-    { name: "Strathpine", lat: -27.3036, lon: 152.9881 },
-    { name: "Springfield", lat: -27.6611, lon: 152.8983 },
-    { name: "Beenleigh", lat: -27.7153, lon: 153.2005 },
-    { name: "Cleveland", lat: -27.5274, lon: 153.2661 },
-    { name: "Mooloolaba", lat: -26.682, lon: 153.1191 },
-    { name: "Maroochydore", lat: -26.6519, lon: 153.091 },
-    { name: "Noosa Heads", lat: -26.3878, lon: 153.0919 },
-    { name: "Gympie", lat: -26.1886, lon: 152.6646 },
-  ];
 
-  const companyLocation = { lat: -33.8688, lon: 151.2093 }; // Hypothetical company location in Sydney
+  async function getGeolocation(
+    address: string
+  ): Promise<{ lat: number; lon: number }> {
+    const apiKey = "0957cc585d0740ffb4190aec39c08655";
+    const response = await fetch(
+      `https://api.opencagedata.com/geocode/v1/json?q=${encodeURIComponent(
+        address
+      )}&key=${apiKey}`
+    );
+    const data = await response.json();
+
+    if (data.results && data.results.length > 0) {
+      const { lat, lng } = data.results[0].geometry;
+      return { lat, lon: lng };
+    } else {
+      throw new Error("Unable to geocode address");
+    }
+  }
 
   function calculateDistance(
     lat1: number,
@@ -178,63 +188,73 @@ export default function BookingForm() {
     return R * c;
   }
 
-  const calculateQuote = () => {
+  const calculateQuote = async () => {
     const service = methodsStep1.getValues("service");
-    const selectedLocationName = methodsStep2.getValues("location");
+    const location = methodsStep1.getValues("location");
+    const dropOffLocation = methodsStep1.getValues("dropOffLocation");
     const stairs = methodsStep2.getValues("stairs");
     const timeSlot = methodsStep3.getValues("timeSlot");
     const weight = methodsStep2.getValues("weight");
+    const subscription = methodsStep3.getValues("subscription");
+    setLoading(true);
 
-    const selectedLocation = locations.find(
-      (loc) => loc.name === selectedLocationName
-    );
-    const distance = selectedLocation
-      ? calculateDistance(
-          companyLocation.lat,
-          companyLocation.lon,
-          selectedLocation.lat,
-          selectedLocation.lon
-        )
-      : 0;
+    try {
+      const locationGeolocation = await getGeolocation(
+        `${location}, Australia`
+      );
+      const dropOffLocationGeolocation = await getGeolocation(
+        `${dropOffLocation}, Australia`
+      );
 
-    const foundGroup = Object.keys(services).find(
-      (group) => services[group][service]
-    );
+      const distance = calculateDistance(
+        locationGeolocation.lat,
+        locationGeolocation.lon,
+        dropOffLocationGeolocation.lat,
+        dropOffLocationGeolocation.lon
+      );
 
-    const baseRate = foundGroup ? services[foundGroup]?.[service] || 0 : 0;
+      const foundGroup = Object.keys(services).find(
+        (group) => services[group][service]
+      );
 
-    const distanceFee = distance > 50 ? (distance - 50) * 1 : 0;
-    const stairsFee = stairs ? stairs * 50 : 0;
-    const peakHourFee = timeSlot === "10am-2pm" ? 50 : 0;
+      const baseRate = foundGroup ? services[foundGroup]?.[service] || 0 : 0;
 
-    let disposalFee = 0;
-    for (const fee of disposalFees) {
-      if (weight <= fee.maxWeight) {
-        disposalFee = fee.fee;
-        break;
-      } else {
-        disposalFee += fee.fee;
+      const distanceFee = distance > 50 ? (distance - 50) * 1 : 0;
+      const stairsFee = stairs ? stairs * 50 : 0;
+      const peakHourFee = timeSlot === "10am-2pm" ? 50 : 0;
+
+      let disposalFee = 0;
+      for (const fee of disposalFees) {
+        if (weight <= fee.maxWeight) {
+          disposalFee = fee.fee;
+          break;
+        } else {
+          disposalFee += fee.fee;
+        }
       }
+
+      const roughTotal =
+        baseRate + distanceFee + stairsFee + peakHourFee + disposalFee + 55;
+      const total = parseFloat(roughTotal.toFixed(2));
+      setLoading(false);
+      setQuote(total);
+      setQuoteDetails({
+        service,
+        baseRate,
+        distanceFee,
+        stairsFee,
+        distance,
+        locationName: location,
+        dropOffLocationName: dropOffLocation,
+        subscription,
+        peakHourFee,
+        disposalFee,
+        bookingFee: 55,
+        total,
+      });
+    } catch (error: any) {
+      throw new Error(error);
     }
-
-    const roughTotal =
-      baseRate + distanceFee + stairsFee + peakHourFee + disposalFee + 55;
-    // Format total to 2 decimal places
-    const total = parseFloat(roughTotal.toFixed(2));
-
-    const locationName = selectedLocation?.name;
-    setQuote(total);
-    setQuoteDetails({
-      service,
-      baseRate,
-      distanceFee,
-      stairsFee,
-      locationName,
-      peakHourFee,
-      disposalFee,
-      bookingFee: 55,
-      total,
-    });
   };
 
   const handleGenerateQuote = () => {
@@ -287,7 +307,9 @@ export default function BookingForm() {
 
     // Add quote details with styled text
     addText("Service", quoteDetails.service, yPos);
-    addText("Drop Off Location", quoteDetails.locationName, (yPos += 10));
+    addText("From", quoteDetails.locationName, (yPos += 10));
+    addText("To", quoteDetails.dropOffLocationName, (yPos += 10));
+    addText("Distance", `${quoteDetails.distance.toFixed(2)} km`, (yPos += 10));
     addText("Base Rate", `$${quoteDetails.baseRate.toFixed(2)}`, (yPos += 10));
     addText(
       "Distance Fee",
@@ -314,6 +336,7 @@ export default function BookingForm() {
       `$${quoteDetails.bookingFee.toFixed(2)}`,
       (yPos += 10)
     );
+    addText("Subscription", `${quoteDetails.subscription}`, (yPos += 10));
 
     // Highlight the total with emphasis
     yPos += 20; // Add some space before the total
@@ -332,18 +355,20 @@ export default function BookingForm() {
         serviceType: quoteDetails?.service,
         baseRate: quoteDetails?.baseRate,
         location: quoteDetails?.locationName,
+        pickUpLocation: quoteDetails?.dropOffLocationName,
         distanceFee: quoteDetails?.distanceFee,
         stairsFee: quoteDetails?.stairsFee,
         peakHourFee: quoteDetails?.peakHourFee,
         disposalFee: quoteDetails?.disposalFee,
         bookingFee: quoteDetails?.bookingFee,
+        subscription: quoteDetails?.subscription,
         total: quoteDetails?.total,
       };
 
       // Submit the form to Formspree
       await handleFormspreeSubmit(formValues);
       if (formState.succeeded) {
-        toast.success("🦄 Wow, message sent successfully!", {
+        toast.success("🦄 Order Placed, Successfully!", {
           position: "top-right",
           autoClose: 5000,
         });
@@ -366,7 +391,7 @@ export default function BookingForm() {
     }
   };
   return (
-    <div className="h-[1000px] bg-gray-100 flex items-center justify-center py-12">
+    <div className="h-[1200px] bg-gray-100 flex items-center justify-center py-12">
       <div className="bg-white rounded-xl shadow-lg overflow-hidden md:flex md:w-4/5 h-full">
         <div className="hidden lg:flex lg:w-1/2 items-center justify-center bg-gray-100 p-10">
           <FaTruck className="text-9xl text-gray-300" />
@@ -415,6 +440,58 @@ export default function BookingForm() {
                         </p>
                       )}
                     </div>
+
+                    <div className="mb-6">
+                      <label className="block text-gray-700 text-lg font-semibold mb-2 flex items-center">
+                        <FaMapMarkerAlt className="text-xl mr-2" />
+                        Location
+                      </label>
+                      <Controller
+                        name="location"
+                        control={methodsStep1.control}
+                        render={({ field }) => (
+                          <input
+                            {...field}
+                            type="text"
+                            placeholder="Enter Location"
+                            className="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-300 focus:ring-2 focus:ring-blue-500 text-lg"
+                          />
+                        )}
+                      />
+                      {methodsStep1.formState.errors.location && (
+                        <p className="text-red-500 text-sm mt-1">
+                          {methodsStep1.formState.errors.location.message}
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="mb-6">
+                      <label className="block text-gray-700 text-lg font-semibold mb-2 flex items-center">
+                        <FaMapMarkerAlt className="text-xl mr-2" />
+                        Pick Up Location
+                      </label>
+                      <Controller
+                        name="dropOffLocation"
+                        control={methodsStep1.control}
+                        render={({ field }) => (
+                          <input
+                            {...field}
+                            type="text"
+                            placeholder="Enter Pick Up Location"
+                            className="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-300 focus:ring-2 focus:ring-blue-500 text-lg"
+                          />
+                        )}
+                      />
+                      {methodsStep1.formState.errors.dropOffLocation && (
+                        <p className="text-red-500 text-sm mt-1">
+                          {
+                            methodsStep1.formState.errors.dropOffLocation
+                              .message
+                          }
+                        </p>
+                      )}
+                    </div>
+
                     <Button
                       type="submit"
                       className="w-full bg-blue-100 text-blue-900 font-bold shadow-md rounded-lg border border-blue-200 hover:bg-blue-200 text-lg px-5 py-2.5 transition duration-300 ease-in-out transform hover:scale-105"
@@ -437,35 +514,6 @@ export default function BookingForm() {
                     className="w-[inherit] md:w-[500px]"
                     onSubmit={methodsStep2.handleSubmit(handleNextStep)}
                   >
-                    <div className="mb-6">
-                      <label className="block text-gray-700 text-lg font-semibold mb-2 flex items-center">
-                        <FaMapMarkerAlt className="text-xl mr-2" />
-                        Select Location
-                      </label>
-                      <Controller
-                        name="location"
-                        control={methodsStep2.control}
-                        render={({ field }) => (
-                          <select
-                            {...field}
-                            className="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-300 focus:ring-2 focus:ring-blue-500 text-lg"
-                          >
-                            <option value="">Select a Location</option>
-                            {locations.map((location) => (
-                              <option key={location.name} value={location.name}>
-                                {location.name}
-                              </option>
-                            ))}
-                          </select>
-                        )}
-                      />
-                      {methodsStep2.formState.errors.location && (
-                        <p className="text-red-500 text-sm mt-1">
-                          {methodsStep2.formState.errors.location.message}
-                        </p>
-                      )}
-                    </div>
-
                     <div className="mb-6">
                       <label className="block text-gray-700 text-lg font-semibold mb-2 flex items-center">
                         <FaBuilding className="text-xl mr-2" />
@@ -569,6 +617,47 @@ export default function BookingForm() {
                         </p>
                       )}
                     </div>
+                    <div className="flex flex-col items-center mb-6">
+                      <h2 className="text-2xl font-bold mb-4">Subscription</h2>
+                      <div className="flex flex-wrap justify-center gap-4">
+                        {["One-Time", "Daily", "Weekly", "Monthly"].map(
+                          (option) => (
+                            <div
+                              key={option}
+                              onClick={() =>
+                                methodsStep3.setValue("subscription", option, {
+                                  shouldValidate: true,
+                                })
+                              }
+                              className={`bg-white border border-gray-200 rounded-lg shadow-md p-3 flex flex-col items-center text-center cursor-pointer transition-all duration-300 ease-in-out ${
+                                methodsStep3.getValues("subscription") ===
+                                option
+                                  ? "bg-gray-100 border-gray-300"
+                                  : ""
+                              } ${
+                                methodsStep3.getValues("subscription") &&
+                                methodsStep3.getValues("subscription") !==
+                                  option
+                                  ? "opacity-50 cursor-not-allowed"
+                                  : ""
+                              }`}
+                            >
+                              <h3 className="text-lg font-semibold">
+                                {option}
+                              </h3>
+                            </div>
+                          )
+                        )}
+                      </div>
+                      {methodsStep3.formState.errors.subscription && (
+                        <p className="text-red-500 text-sm mt-1">
+                          {methodsStep3.formState.errors.subscription.message}
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Existing form fields and buttons */}
+
                     <div className="flex justify-between">
                       <Button
                         type="button"
@@ -582,7 +671,17 @@ export default function BookingForm() {
                         type="submit"
                         className="bg-white text-gray-900 font-bold shadow-md rounded-lg border border-gray-300 hover:bg-gray-100 text-lg px-5 py-2.5 transition duration-300 ease-in-out transform hover:scale-105"
                       >
-                        Generate Quote
+                        Generate Quote{" "}
+                        {loading && (
+                          <span className="ml-2">
+                            <Circles
+                              height="20"
+                              width="20"
+                              color="blue"
+                              ariaLabel="circles-loading"
+                            />
+                          </span>
+                        )}
                       </Button>
                     </div>
                   </form>
@@ -612,12 +711,18 @@ export default function BookingForm() {
                   <p className="text-lg">{quoteDetails.service}</p>
                 </div>
                 <div className="mb-4">
-                  <p className="text-lg font-medium">Pick up Location:</p>
+                  <p className="text-lg font-medium">Location:</p>
                   <p className="text-lg">{quoteDetails.locationName}</p>
                 </div>
                 <div className="mb-4">
-                  <p className="text-lg font-medium">Drop Off Location:</p>
-                  <p className="text-lg">{quoteDetails.locationName}</p>
+                  <p className="text-lg font-medium">Pick Up Location:</p>
+                  <p className="text-lg">{quoteDetails.dropOffLocationName}</p>
+                </div>
+                <div className="mb-4">
+                  <p className="text-lg font-medium">Distance:</p>
+                  <p className="text-lg">
+                    {quoteDetails.distance.toFixed(2)} km
+                  </p>
                 </div>
                 <div className="mb-4">
                   <p className="text-lg font-medium">Base Rate:</p>
@@ -642,6 +747,10 @@ export default function BookingForm() {
                 <div className="mb-4">
                   <p className="text-lg font-medium">Booking Fee:</p>
                   <p className="text-lg">${quoteDetails.bookingFee}</p>
+                </div>
+                <div className="mb-4">
+                  <p className="text-lg font-medium">Subscription:</p>
+                  <p className="text-lg">{quoteDetails.subscription}</p>
                 </div>
                 <div className="mb-4">
                   <p className="text-lg font-semibold">Total:</p>
